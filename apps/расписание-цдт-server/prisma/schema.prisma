@@ -1,0 +1,69 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Student {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  fullName          String?
+  certificateNumber String?
+  lessons           Lesson[]
+}
+
+model Teacher {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  hours     Int?
+  fullName  String?
+  room      String?
+  subject   String?
+  groups    Group[]
+  lessons   Lesson[]
+  schedules Schedule[]
+}
+
+model Lesson {
+  id         String    @id @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  topic      String?
+  room       String?
+  subject    String?
+  lessonTime DateTime?
+  group      Group?    @relation(fields: [groupId], references: [id])
+  groupId    String?
+  teacher    Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId  String?
+  student    Student?  @relation(fields: [studentId], references: [id])
+  studentId  String?
+}
+
+model Schedule {
+  id         String    @id @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  lessonTime DateTime?
+  room       String?
+  teacher    Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId  String?
+}
+
+model Group {
+  id         String    @id @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  name       String?
+  lessonTime DateTime?
+  room       String?
+  subject    String?
+  teacher    Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId  String?
+  lessons    Lesson[]
+}
